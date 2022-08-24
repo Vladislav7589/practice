@@ -85,7 +85,7 @@ class _AppState extends State<App> {
                           borderWidth: 2,
                           fontSize: 35,
                           color: Colors.lightBlue,
-                          text: "Press button download")
+                          text: "Press button to download")
                   ),
                 ),
               ),
