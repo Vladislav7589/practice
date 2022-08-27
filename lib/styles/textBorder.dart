@@ -18,9 +18,11 @@ class TextBorder extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return Stack(
+      children: [
       Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: fontSize,
           fontFamily: fontFamily,
@@ -33,6 +35,7 @@ class TextBorder extends StatelessWidget{
       // Solid text as fill.
       Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: fontSize,
           fontFamily: fontFamily,

@@ -1,37 +1,51 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:practic/styles/styles.dart';
 import 'package:practic/styles/textBorder.dart';
+import 'package:practic/weatherPage.dart';
+import 'package:practic/widgets/IncrDecrt.dart';
 
 void main() => runApp(App());
 
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _AppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (BuildContext context) =>  _HomePage(),
+        '/weatherPage' : (BuildContext context) =>  WeatherPage(),
+    },
+    );
   }
 }
 
-class _AppState extends State<App> {
+
+class _HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _HomePageState();
+  }
+}
+
+class _HomePageState extends State<_HomePage> {
   late bool _loading;
   late double _progressValue;
-  late int _count;
-
 
   @override
   void initState() {
     _loading = false;
     _progressValue = 0.0;
-    _count = 30;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Container(
+    return  Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("assets/image/28.jpg"),
@@ -81,34 +95,41 @@ class _AppState extends State<App> {
                               ),
                             )
                           : TextBorder(
-                          fontFamily: "IndieFlower",
-                          borderWidth: 2,
-                          fontSize: 35,
-                          color: Colors.lightBlue,
-                          text: "Press button to download")
-                  ),
+                              fontFamily: "IndieFlower",
+                              borderWidth: 2,
+                              fontSize: 35,
+                              color: Colors.lightBlue,
+                              text: "Press button to download")),
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
-              Container(child: Row(children: [
-
-              ],),)
+              IncrDecr(),
+              RaisedButton(
+                color: Colors.lightBlue,
+                child: Text("Weather page",style: TextStyle(color: Colors.white),),
+                  onPressed: (){
+                    Navigator.pushNamed(context, '/weatherPage');
+              }
+              )
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                _loading = !_loading;
-                _update();
-              });
-            },
-            child: Icon(Icons.cloud_download),
+          floatingActionButton: Visibility(
+            visible: !_loading,
+            child: FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  _loading = !_loading;
+                  _update();
+                });
+              },
+              child: Icon(Icons.cloud_download),
+            ),
           ),
         ),
-      ),
-    );
+      );
+
   }
 
   void _update() {
