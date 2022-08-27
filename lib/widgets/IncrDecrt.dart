@@ -26,46 +26,53 @@ class IncrDecrState extends State<IncrDecr> {
           decoration: BoxDecoration(
               color: Colors.white54,
               border: Border.all(width: 2, color: Colors.lightBlue)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                tooltip: "increment",
-                splashRadius: 25,
-                splashColor: Colors.white,
-                onPressed: () {
-                  setState(() {
-                    _count++;
-                  });
-                },
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.lightBlue,
-                ),
-              ),
-              Container(
-                width: 40,
-                child: Text(
-                  "$_count",
-                  style: mainStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              IconButton(
-                  tooltip: "decrement",
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  tooltip: "increment",
                   splashRadius: 25,
                   splashColor: Colors.white,
                   onPressed: () {
                     setState(() {
-                      _count--;
+                      _count++;
                     });
                   },
                   icon: Icon(
-                    Icons.remove,
+                    Icons.add,
                     color: Colors.lightBlue,
-                  ))
-            ],
+                  ),
+                ),
+                _verticalDivider (),
+                Container(
+                  width: 50,
+                  child: Text(
+                    "$_count",
+                    style: mainStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                _verticalDivider (),
+                IconButton(
+                    tooltip: "decrement",
+                    splashRadius: 25,
+                    splashColor: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        _count--;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.remove,
+                      color: Colors.lightBlue,
+                    ))
+              ],
+            ),
           )),
     );
+  }
+  VerticalDivider _verticalDivider (){
+    return VerticalDivider(width: 2,color: Colors.lightBlue,thickness: 2,);
   }
 }

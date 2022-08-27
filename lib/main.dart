@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:practic/screens/interactionPage.dart';
 import 'package:practic/styles/styles.dart';
 import 'package:practic/styles/textBorder.dart';
-import 'package:practic/weatherPage.dart';
+import 'package:practic/screens/weatherPage.dart';
 import 'package:practic/widgets/IncrDecrt.dart';
 
 void main() => runApp(App());
@@ -18,6 +19,7 @@ class App extends StatelessWidget {
       routes: {
         '/': (BuildContext context) =>  _HomePage(),
         '/weatherPage' : (BuildContext context) =>  WeatherPage(),
+        '/interactionPage' : (BuildContext context) =>  InteractionPage(),
     },
     );
   }
@@ -35,7 +37,7 @@ class _HomePage extends StatefulWidget {
 class _HomePageState extends State<_HomePage> {
   late bool _loading;
   late double _progressValue;
-
+  String text= "Текст";
   @override
   void initState() {
     _loading = false;
@@ -61,58 +63,45 @@ class _HomePageState extends State<_HomePage> {
               SizedBox(
                 height: 20,
               ),
-              const Center(
-                child: ImageIcon(
-                  AssetImage("assets/icons/flutter.png"),
-                  color: Colors.lightBlue,
-                  size: 100,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Container(
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _loading
-                          ? Container(
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Progress...",
-                                    style: mainStyle,
-                                  ),
-                                  LinearProgressIndicator(
-                                    color: Colors.green,
-                                    value: _progressValue,
-                                  ),
-                                  Text(
-                                    "${(_progressValue * 100).round()} %",
-                                    style: mainStyle,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : TextBorder(
-                              fontFamily: "IndieFlower",
-                              borderWidth: 2,
-                              fontSize: 35,
-                              color: Colors.lightBlue,
-                              text: "Press button to download")),
-                ),
-              ),
+              Wrap(
+                spacing: 10,
+                children: [
+                ElevatedButton(
+                  style: raizedButtomStyle,
+                  onPressed: (){
+                    _getReturnedData(context);
+                }, child: Text("Погода"),),
+                ElevatedButton(
+                  style: raizedButtomStyle,
+                  onPressed: (){
+                  Navigator.pushNamed(context, '/interactionPage');
+                }, child: Text("Взаимодействие"),),
+                  ElevatedButton(
+                    style: raizedButtomStyle,
+                    onPressed: (){
+                      _getReturnedData(context);
+                    }, child: Text("Погода"),),
+                  ElevatedButton(
+                    style: raizedButtomStyle,
+                    onPressed: (){
+                      _getReturnedData(context);
+                    }, child: Text("Погода"),),
+
+              ],),
               SizedBox(
                 height: 20,
               ),
               IncrDecr(),
-              RaisedButton(
-                color: Colors.lightBlue,
-                child: Text("Weather page",style: TextStyle(color: Colors.white),),
-                  onPressed: (){
-                    Navigator.pushNamed(context, '/weatherPage');
-              }
-              )
+              SizedBox(
+                height: 20,
+              ),
+              Text("Returned text: $text",style: mainStyle,),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: _progressItem ()
+              ),
             ],
           ),
           floatingActionButton: Visibility(
@@ -131,6 +120,49 @@ class _HomePageState extends State<_HomePage> {
       );
 
   }
+  void _getReturnedData (BuildContext context) async {
+    Date date = Date(month: "Июль",number: 15);
+    final rezult = await Navigator.pushNamed(context, '/weatherPage', arguments: {
+      'name' : "Вторник",
+      'user': date,
+    }) as String;
+
+    setState(() {
+      text = rezult;
+    });
+  }
+
+  Container _progressItem () {
+    return Container(
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _loading
+              ? Container(
+            child: Column(
+              children: [
+                const Text(
+                  "Progress...",
+                  style: mainStyle,
+                ),
+                LinearProgressIndicator(
+                  color: Colors.green,
+                  value: _progressValue,
+                ),
+                Text(
+                  "${(_progressValue * 100).round()} %",
+                  style: mainStyle,
+                ),
+              ],
+            ),
+          )
+              : TextBorder(
+              fontFamily: "IndieFlower",
+              borderWidth: 2,
+              fontSize: 25,
+              color: Colors.lightBlue,
+              text: "Press button to download")),
+    );
+  }
 
   void _update() {
     const oneSec = Duration(seconds: 1);
@@ -147,4 +179,14 @@ class _HomePageState extends State<_HomePage> {
       });
     });
   }
+}
+
+class Date {
+  late String month;
+  late int number;
+
+  Date({
+    required this.number,
+    required this.month,
+});
 }
