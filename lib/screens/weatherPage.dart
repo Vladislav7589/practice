@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practic/main.dart';
+import 'homePage.dart';
 
 class WeatherPage extends StatefulWidget {
 
