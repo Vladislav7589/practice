@@ -12,18 +12,19 @@ class InteractionPage extends StatefulWidget {
 
 class InteractionPageState extends State<InteractionPage>
     with InputValidationMixin {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController yourSelfController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+  TextEditingController _yourSelfController = TextEditingController();
 
-  List<String> countries = ["Россия", "Германия", "Польша", "Шатландия"];
-  late String selectedCountry;
-  bool visiblePassword = true;
+  List<String> _countries = ["Россия", "Германия", "Польша", "Шатландия"];
+  late String _selectedCountry;
+  bool _visiblePassword = true;
 
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   var maskFormatter = new MaskTextInputFormatter(
       mask: '+# (###) ###-##-##',
@@ -31,25 +32,25 @@ class InteractionPageState extends State<InteractionPage>
       type: MaskAutoCompletionType.lazy
   );
 
-  final nameFocus = FocusNode();
-  final phoneFocus = FocusNode();
-  final emailFocus = FocusNode();
-  final passwordFocus = FocusNode();
+  final _nameFocus = FocusNode();
+  final _phoneFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
 
 
   @override
   void dispose() {
     // TODO: implement dispose
-    nameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    yourSelfController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _yourSelfController.dispose();
 
-    nameFocus.dispose();
-    phoneFocus.dispose();
-    emailFocus.dispose();
-    passwordFocus.dispose();
+    _nameFocus.dispose();
+    _phoneFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
 
     super.dispose();
   }
@@ -63,6 +64,7 @@ class InteractionPageState extends State<InteractionPage>
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
             "Взаимодействие",
@@ -70,7 +72,7 @@ class InteractionPageState extends State<InteractionPage>
           centerTitle: true,
         ),
         body: Form(
-          key: formKey,
+          key: _formKey,
           child: ListView(
             padding: EdgeInsets.all(16),
             children: [
@@ -83,12 +85,13 @@ class InteractionPageState extends State<InteractionPage>
                 height: 16,
               ),
               TextFormField(
-                focusNode: nameFocus,
+
+                focusNode: _nameFocus,
                 autofocus: true,
                 onFieldSubmitted: (_){
-                  focusChange(context,nameFocus,phoneFocus);
+                  focusChange(context,_nameFocus,_phoneFocus);
                 },
-                controller: nameController,
+                controller: _nameController,
                 validator: (val) {
                   if (!isNameValid(val!)) {
                     return 'Поле пустое или некорректно заполнено';
@@ -96,8 +99,9 @@ class InteractionPageState extends State<InteractionPage>
                     return null;
                   }
                 },
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
+                decoration:  InputDecoration(
+                  isDense: true,
+                  errorBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   enabledBorder: OutlineInputBorder(
@@ -109,27 +113,27 @@ class InteractionPageState extends State<InteractionPage>
                   labelText: "Фамилия и имя",
                   hintText: "Иванов Иван",
                   prefixIcon: Icon(Icons.person),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
-                    splashRadius: 20,
-                    onPressed: () {
-                      nameController.clear();
+                  suffix:   GestureDetector(
+                    onTap: (){
+                      _nameController.clear();
                     },
-                  ),
+                      child: Icon(Icons.delete_outline,color: Colors.red,
+                      ))
                 ),
               ),
               SizedBox(
                 height: 16,
               ),
               TextFormField(
-                focusNode: phoneFocus,
+                focusNode: _phoneFocus,
                 onFieldSubmitted: (_){
-                  focusChange(context,phoneFocus,emailFocus);
+                  focusChange(context,_phoneFocus,_emailFocus);
                 },
                 keyboardType: TextInputType.phone,
                 inputFormatters: [maskFormatter],
-                controller: phoneController,
+                controller: _phoneController,
                 decoration: InputDecoration(
+                    isDense: true,
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -140,13 +144,12 @@ class InteractionPageState extends State<InteractionPage>
                   hintText: "+7-(XXX)-XXX-XX-XX",
                   helperText: "Формат: +7-(XXX)-XXX-XX-XX",
                   prefixIcon: Icon(Icons.phone),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
-                    splashRadius: 20,
-                    onPressed: () {
-                      phoneController.clear();
-                    },
-                  ),
+                    suffix:   GestureDetector(
+                        onTap: (){
+                          _phoneController.clear();
+                        },
+                        child: Icon(Icons.delete_outline,color: Colors.red,
+                        ))
                 ),
                 validator: (val) {
                   if (!isPhoneValid(val!)) {
@@ -160,14 +163,16 @@ class InteractionPageState extends State<InteractionPage>
                 height: 16,
               ),
               TextFormField(
-                focusNode: emailFocus,
+                focusNode: _emailFocus,
                 onFieldSubmitted: (_){
-                  focusChange(context,emailFocus,passwordFocus);
+                  focusChange(context,_emailFocus,_passwordFocus);
                 },
                 keyboardType: TextInputType.emailAddress,
-                controller: emailController,
+                controller: _emailController,
                 decoration: InputDecoration(
+                    isDense: true,
                   enabledBorder: OutlineInputBorder(
+
                       borderSide: BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   focusedBorder: OutlineInputBorder(
@@ -176,13 +181,12 @@ class InteractionPageState extends State<InteractionPage>
                   labelText: "E-mail",
                   hintText: "Введите E-mail",
                   prefixIcon: Icon(Icons.email),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
-                    splashRadius: 20,
-                    onPressed: () {
-                      emailController.clear();
-                    },
-                  ),
+                    suffix:   GestureDetector(
+                        onTap: (){
+                          _emailController.clear();
+                        },
+                        child: Icon(Icons.delete_outline,color: Colors.red,
+                        ))
                 ),
                 validator: (val) {
                   if (!isEmailValid(val!)) {
@@ -197,6 +201,7 @@ class InteractionPageState extends State<InteractionPage>
               ),
               DropdownButtonFormField(
                 decoration: InputDecoration(
+                    isDense: true,
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
                         borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -204,14 +209,14 @@ class InteractionPageState extends State<InteractionPage>
                         borderSide: BorderSide(color: Colors.blue),
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     labelText: "Выберите страну..."),
-                items: countries.map((country) {
+                items: _countries.map((country) {
                   return DropdownMenuItem(
                       child: Text("$country"), value: country);
                 }).toList(),
                 onChanged: (data) {
                   print(data);
                   setState(() {
-                    selectedCountry = data.toString();
+                    _selectedCountry = data.toString();
                   });
                 },
                 validator: (val) {
@@ -225,8 +230,9 @@ class InteractionPageState extends State<InteractionPage>
               TextFormField(
                 maxLines: 3,
                 maxLength: 225,
-                controller: yourSelfController,
+                controller: _yourSelfController,
                 decoration: InputDecoration(
+                    isDense: true,
                   //alignLabelWithHint: true,
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
@@ -237,25 +243,23 @@ class InteractionPageState extends State<InteractionPage>
                   labelText: "О себе",
                   hintText: "Расскажите о себе",
                   prefixIcon: Icon(Icons.message),
-                  suffix: IconButton(
-                    padding: EdgeInsets.all(0),
-                    alignment: Alignment.topRight,
-                    icon: Icon(Icons.clear),
-                    splashRadius: 20,
-                    onPressed: () {
-                      yourSelfController.clear();
-                    },
-                  ),
+                    suffix:   GestureDetector(
+                        onTap: (){
+                          _yourSelfController.clear();
+                        },
+                        child: Icon(Icons.delete_outline,color: Colors.red,
+                        ))
                 ),
               ),
               SizedBox(
                 height: 16,
               ),
               TextFormField(
-                focusNode: passwordFocus,
-                controller: passwordController,
-                obscureText: visiblePassword,
+                focusNode: _passwordFocus,
+                controller: _passwordController,
+                obscureText: _visiblePassword,
                 decoration: InputDecoration(
+                  isDense: true,
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -266,13 +270,13 @@ class InteractionPageState extends State<InteractionPage>
                   hintText: "Введите пароль",
                   prefixIcon: Icon(Icons.security),
                   suffixIcon: IconButton(
-                    icon: Icon(visiblePassword
+                    icon: Icon(_visiblePassword
                         ? Icons.visibility
                         : Icons.visibility_off),
                     splashRadius: 20,
                     onPressed: () {
                       setState(() {
-                        visiblePassword = !visiblePassword;
+                        _visiblePassword = !_visiblePassword;
                       });
                     },
                   ),
@@ -283,8 +287,8 @@ class InteractionPageState extends State<InteractionPage>
                 height: 16,
               ),
               TextFormField(
-                controller: confirmPasswordController,
-                obscureText: visiblePassword,
+                controller: _confirmPasswordController,
+                obscureText: _visiblePassword,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
@@ -319,28 +323,43 @@ class InteractionPageState extends State<InteractionPage>
   }
 
   void submitForm() {
-    if (formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      _showMassage(message: "Форма успешно заполнена!", color: Colors.green);
       print("Форма заполнена отправлена:");
-      print("Имя Фамилия: ${nameController.text}");
-      print("Телефон: ${phoneController.text}");
-      print("E-mail: ${emailController.text}");
-      print("Страна: $selectedCountry");
-      print("О себе: ${yourSelfController.text}");
-      print("Пароль: ${passwordController.text}");
+      print("Имя Фамилия: ${_nameController.text}");
+      print("Телефон: ${_phoneController.text}");
+      print("E-mail: ${_emailController.text}");
+      print("Страна: $_selectedCountry");
+      print("О себе: ${_yourSelfController.text}");
+      print("Пароль: ${_passwordController.text}");
     } else {
+      _showMassage(message: "Форма заполнена неверно", color: Colors.red);
       print("Форма заполнена неверно");
     }
   }
 
   String? validatePassoword(String? val) {
-    if (passwordController.text.length < 8) {
+    if (_passwordController.text.length < 8) {
       return 'Пароль должен быть длинее 8 символов';
-    } else if (confirmPasswordController.text != passwordController.text) {
+    } else if (_confirmPasswordController.text != _passwordController.text) {
       return 'Пароли не совпадают';
     } else {
       return null;
     }
   }
+
+  void _showMassage ( { required String message, required Color color}){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          behavior: SnackBarBehavior.floating,
+        elevation: 30,
+        duration: Duration(seconds: 4),
+        backgroundColor: color,
+          content: Text("$message"))
+    );
+  }
+
 }
 
 mixin InputValidationMixin {

@@ -58,13 +58,18 @@ class HomePageState extends State<HomePage> {
                 ElevatedButton(
                   style: raizedButtomStyle,
                   onPressed: (){
-                    _getReturnedData(context);
-                  }, child: Text("Погода"),),
+                    Navigator.pushNamed(context, '/networkPage');
+                  }, child: Text("Сеть"),),
                 ElevatedButton(
                   style: raizedButtomStyle,
                   onPressed: (){
-                    _getReturnedData(context);
-                  }, child: Text("Погода"),),
+                    Navigator.pushNamed(context, '/inheritedPage');
+                  }, child: Text("Inherited"),),
+                ElevatedButton(
+                  style: raizedButtomStyle,
+                  onPressed: (){
+                    Navigator.pushNamed(context, '/providerPage');
+                  }, child: Text("Provider"),),
 
               ],),
             SizedBox(
