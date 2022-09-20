@@ -7,6 +7,7 @@ import 'package:practic/screens/inheritedPage.dart';
 import 'package:practic/screens/interactionPage.dart';
 import 'package:practic/screens/networkPage.dart';
 import 'package:practic/screens/providerPage.dart';
+import 'package:practic/screens/readWritePage.dart';
 import 'package:practic/styles/styles.dart';
 import 'package:practic/styles/textBorder.dart';
 import 'package:practic/screens/weatherPage.dart';
@@ -30,6 +31,7 @@ class App extends StatelessWidget {
         '/networkPage' : (BuildContext context) =>  NetworkPage(),
         '/inheritedPage' : (BuildContext context) =>  InheritedPage(),
         '/providerPage' : (BuildContext context) =>  ProviderPage(),
+        '/readWritePage' : (BuildContext context) =>  ReadWriteFilePage()
 
     },
     );

@@ -70,6 +70,13 @@ class HomePageState extends State<HomePage> {
                   onPressed: (){
                     Navigator.pushNamed(context, '/providerPage');
                   }, child: Text("Provider"),),
+                ElevatedButton(
+                  style: raizedButtomStyle,
+                  onPressed: (){
+                    Navigator.pushNamed(context, '/readWritePage');
+                  }, child: Text("Чтение/запись"),),
+
+
 
               ],),
             SizedBox(

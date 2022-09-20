@@ -1,13 +1,14 @@
-
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:practic/providers/colorProvider.dart';
+import 'package:practic/providers/countProvider.dart';
+import 'package:practic/providers/eventProvider.dart';
+import 'package:practic/providers/usersProvider.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-
 
 class ProviderPage extends StatelessWidget {
   @override
@@ -17,45 +18,53 @@ class ProviderPage extends StatelessWidget {
 }
 
 class Providers extends StatelessWidget {
-Widget build(BuildContext context) {
-  return MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-          create: (context) => CountProvider()),
-      FutureProvider<List<User>>(
-        initialData: const [],
-        create: (context) async => UserProvider().loadUserData(),
-      ),
-      StreamProvider<int>(
-        initialData: 0,
-        create: (context) => EventProvider().intStream(),
-      ),
-    ],
-    child: DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Provider"),
-          centerTitle: true,
-          bottom: const TabBar(
-            tabs: <Widget>[
-              Tab(icon: Icon(Icons.add)),
-              Tab(icon: Icon(Icons.person)),
-              Tab(icon: Icon(Icons.message)),
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CountProvider()),
+        ChangeNotifierProvider(create: (context) => ColorProvider()),
+        FutureProvider<List<User>>(
+          initialData: const [],
+          create: (context) async => UserProvider().loadUserData(),
+        ),
+        StreamProvider<int>(
+          initialData: 0,
+          create: (context) => EventProvider().intStream(),
+        ),
+      ],
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(100),
+            child: Consumer<ColorProvider>(
+              builder: (context, value, child){
+                return AppBar(
+                  title:  Text("Provider"),
+                  backgroundColor: value.color,
+                  centerTitle: true,
+                  bottom: TabBar(
+                    tabs: <Widget>[
+                      Tab(icon: Icon(Icons.add)),
+                      Tab(icon: Icon(Icons.person)),
+                      Tab(icon: Icon(Icons.message)),
+                    ],
+                  ),
+                );
+              }
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              MyCountPage(),
+              MyUserPage(),
+              ColorPage(),
             ],
           ),
         ),
-        body: const TabBarView(
-          children: <Widget>[
-            MyCountPage(),
-            MyUserPage(),
-            MyEventPage(),
-          ],
-        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class MyCountPage extends StatelessWidget {
@@ -80,14 +89,14 @@ class MyCountPage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.remove),
                   color: Colors.red,
-                  onPressed: () => state._decrementCount(),
+                  onPressed: () => state.decrementCount(),
                 ),
                 Consumer<CountProvider>(
                   builder: (context, value, child) {
                     return IconButton(
                       icon: const Icon(Icons.add),
                       color: Colors.green,
-                      onPressed: () => value._incrementCount(),
+                      onPressed: () => value.incrementCount(),
                     );
                   },
                 ),
@@ -118,16 +127,16 @@ class MyUserPage extends StatelessWidget {
               child: users.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                      height: 50,
-                      color: Colors.grey[(index * 200) % 400],
-                      child: Center(
-                          child: Text(
-                              '${users[index].firstName} ${users[index].lastName} | ${users[index].website}')));
-                },
-              ),
+                      itemCount: users.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                            height: 50,
+                            color: Colors.grey[(index * 200) % 400],
+                            child: Center(
+                                child: Text(
+                                    '${users[index].firstName} ${users[index].lastName} | ${users[index].website}')));
+                      },
+                    ),
             );
           },
         ),
@@ -145,64 +154,56 @@ class MyEventPage extends StatelessWidget {
     var value = Provider.of<int>(context);
     return Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('StreamProvider', style: TextStyle(fontSize: 20)),
-            const SizedBox(height: 50),
-            Text(value.toString(),
-                style: Theme.of(context).textTheme.headline4)
-          ],
-        ));
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('StreamProvider', style: TextStyle(fontSize: 20)),
+        const SizedBox(height: 50),
+        Text(value.toString(), style: Theme.of(context).textTheme.headline4)
+      ],
+    ));
   }
 }
 
-// CountProvider (ChangeNotifier)
-class CountProvider extends ChangeNotifier {
-  int _count = 0;
-  int get counterValue => _count;
+class ColorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child:
+                Consumer<ColorProvider>(
+                  builder: (context, state, child) {
+                    return  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                              decoration: BoxDecoration(// added
+                                color: state.color,
+                                borderRadius: BorderRadius.circular(state.enable ? 25 : 0),
+                              ),
+                              width: state.enable ? 100.0 : 200.0,
+                              height: state.enable ? 100.0 : 200.0,
+                              duration: const Duration(seconds: 1),
 
-  void _incrementCount() {
-    _count++;
-    notifyListeners();
-  }
-
-  void _decrementCount() {
-    _count--;
-    notifyListeners();
-  }
-}
-
-// UserProvider (Future)
-class UserProvider {
-
-  final String _dataPath = "assets/users.json";
-  List<User> users = [];
-
-  Future<String> loadAsset() async {
-    return await Future.delayed(const Duration(seconds: 2), () async {
-      return await rootBundle.loadString(_dataPath);
-    });
-  }
-
-  Future<List<User>> loadUserData() async {
-    var dataString = await loadAsset();
-    Map<String, dynamic> jsonUserData = jsonDecode(dataString);
-    users = UserList.fromJson(jsonUserData['users']).users;
-    return users;
-  }
-}
-
-// EventProvider (Stream)
-class EventProvider {
-  Stream<int> intStream() {
-    Duration interval = const Duration(seconds: 2);
-    return Stream<int>.periodic(interval, (int count) => count++);
+                          ),
+                          Switch(
+                              value: state.enable,
+                              activeColor: state.color,
+                              onChanged: (value) {
+                                    state.enable = value;
+                                    state.changeColor();
+                              }
+                          ),
+                        ],
+                    );
+                  },
+                )
+    );
   }
 }
 
 // User Model
 class User {
   final String firstName, lastName, website;
+
   const User(this.firstName, this.lastName, this.website);
 
   User.fromJson(Map<String, dynamic> json)
@@ -214,6 +215,7 @@ class User {
 // User List Model
 class UserList {
   final List<User> users;
+
   UserList(this.users);
 
   UserList.fromJson(List<dynamic> usersJson)
